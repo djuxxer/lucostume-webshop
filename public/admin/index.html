@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — LU Costume</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/admin/css/admin.css">
+</head>
+<body>
+
+<!-- ===== LOGIN SCREEN ===== -->
+<div class="login-screen" id="loginScreen">
+  <form class="login-box" id="loginForm">
+    <h1>LU<span>Costume</span></h1>
+    <p class="login-sub">Admin panel</p>
+    <label>Korisničko ime<input type="text" name="username" autocomplete="username" required></label>
+    <label>Lozinka<input type="password" name="password" autocomplete="current-password" required></label>
+    <p class="login-error" id="loginError" hidden></p>
+    <button type="submit" class="btn-primary">Prijavi se</button>
+  </form>
+</div>
+
+<!-- ===== ADMIN APP ===== -->
+<div class="admin-app" id="adminApp" hidden>
+  <aside class="sidebar">
+    <div class="sidebar-logo">LU<span>Costume</span></div>
+    <nav class="sidebar-nav">
+      <button class="nav-item active" data-view="products">📦 Proizvodi</button>
+      <button class="nav-item" data-view="hero">🖼️ Hero slike</button>
+      <button class="nav-item" data-view="orders">🧾 Porudžbine</button>
+      <button class="nav-item" data-view="settings">⚙️ Podešavanja</button>
+    </nav>
+    <div class="sidebar-footer">
+      <a href="/" target="_blank" class="view-site-link">Pogledaj sajt ↗</a>
+      <button class="logout-btn" id="logoutBtn">Odjavi se</button>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+
+    <!-- ---------- PRODUCTS VIEW ---------- -->
+    <section class="view" id="view-products">
+      <div class="view-head">
+        <h2>Proizvodi</h2>
+        <button class="btn-primary" id="newProductBtn">+ Novi proizvod</button>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table" id="productsTable">
+          <thead>
+            <tr><th></th><th>Naziv</th><th>Kategorija</th><th>Cena</th><th>Status</th><th></th></tr>
+          </thead>
+          <tbody id="productsTbody"></tbody>
+        </table>
+        <p class="table-empty" id="productsEmptyMsg" hidden>Nema dodatih proizvoda. Klikni "Novi proizvod" da dodaš prvi.</p>
+      </div>
+    </section>
+
+    <!-- ---------- HERO VIEW ---------- -->
+    <section class="view" id="view-hero" hidden>
+      <div class="view-head">
+        <h2>Hero slike</h2>
+        <button class="btn-primary" id="newHeroBtn">+ Novi slajd</button>
+      </div>
+      <p class="view-desc">Slike koje se prikazuju na vrhu početne strane (rotiraju se automatski ako ima više od jedne).</p>
+      <div class="hero-list" id="heroList"></div>
+    </section>
+
+    <!-- ---------- ORDERS VIEW ---------- -->
+    <section class="view" id="view-orders" hidden>
+      <div class="view-head">
+        <h2>Porudžbine</h2>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table" id="ordersTable">
+          <thead>
+            <tr><th>Broj</th><th>Kupac</th><th>Telefon</th><th>Grad</th><th>Ukupno</th><th>Status</th><th>Datum</th><th></th></tr>
+          </thead>
+          <tbody id="ordersTbody"></tbody>
+        </table>
+        <p class="table-empty" id="ordersEmptyMsg" hidden>Još nema porudžbina.</p>
+      </div>
+    </section>
+
+    <!-- ---------- SETTINGS VIEW ---------- -->
+    <section class="view" id="view-settings" hidden>
+      <div class="view-head"><h2>Podešavanja</h2></div>
+
+      <div class="settings-card">
+        <h3>Dostava</h3>
+        <form id="shippingForm" class="settings-form">
+          <label>Cena dostave (pouzećem, рсд)<input type="number" name="shipping_cost" min="0"></label>
+          <label>Besplatna dostava iznad (рсд)<input type="number" name="free_shipping_threshold" min="0"></label>
+          <button type="submit" class="btn-primary">Sačuvaj</button>
+        </form>
+      </div>
+
+      <div class="settings-card">
+        <h3>Podaci o radnji</h3>
+        <form id="shopInfoForm" class="settings-form">
+          <label>Naziv radnje<input type="text" name="shop_name"></label>
+          <label>Email<input type="email" name="shop_email"></label>
+          <label>Telefon<input type="text" name="shop_phone"></label>
+          <button type="submit" class="btn-primary">Sačuvaj</button>
+        </form>
+      </div>
+
+      <div class="settings-card">
+        <h3>Promena lozinke</h3>
+        <form id="passwordForm" class="settings-form">
+          <label>Trenutna lozinka<input type="password" name="current_password" required></label>
+          <label>Nova lozinka<input type="password" name="new_password" required minlength="6"></label>
+          <button type="submit" class="btn-primary">Promeni lozinku</button>
+        </form>
+        <p class="form-msg" id="passwordMsg"></p>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ===== PRODUCT EDIT MODAL ===== -->
+<div class="modal-overlay" id="productModalOverlay">
+  <div class="modal product-modal">
+    <button class="modal-close" id="productModalClose">&times;</button>
+    <h3 id="productModalTitle">Novi proizvod</h3>
+    <form id="productForm">
+      <input type="hidden" name="id">
+      <label>Naziv proizvoda *<input type="text" name="name" required></label>
+      <div class="form-split">
+        <label>Cena (рсд) *<input type="number" name="price" min="0" required></label>
+        <label>Kategorija<input type="text" name="category" placeholder="npr. Tutu, Jazz, Lyrical"></label>
+      </div>
+      <label>Veličine (odvoji zarezom)<input type="text" name="sizes" placeholder="XS, S, M, L"></label>
+      <label>Opis<textarea name="description" rows="3"></textarea></label>
+
+      <label>Slike proizvoda</label>
+      <div class="image-upload-zone" id="productImagesZone">
+        <div class="image-list" id="productImagesList"></div>
+        <label class="upload-btn">
+          + Dodaj slike
+          <input type="file" id="productImagesInput" accept="image/*" multiple hidden>
+        </label>
+        <p class="upload-hint">Prva slika u listi se koristi kao glavna slika proizvoda.</p>
+      </div>
+
+      <div class="form-split">
+        <label class="checkbox-label"><input type="checkbox" name="active" checked> Aktivan (prikazuje se na sajtu)</label>
+        <label>Redosled prikaza<input type="number" name="sort_order" value="0"></label>
+      </div>
+
+      <p class="form-error" id="productFormError" hidden></p>
+      <div class="modal-actions">
+        <button type="button" class="btn-danger" id="deleteProductBtn" hidden>Obriši proizvod</button>
+        <button type="submit" class="btn-primary">Sačuvaj proizvod</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ===== HERO EDIT MODAL ===== -->
+<div class="modal-overlay" id="heroModalOverlay">
+  <div class="modal hero-modal">
+    <button class="modal-close" id="heroModalClose">&times;</button>
+    <h3 id="heroModalTitle">Novi hero slajd</h3>
+    <form id="heroForm">
+      <input type="hidden" name="id">
+      <label>Slika</label>
+      <div class="image-upload-zone" id="heroImageZone">
+        <div class="image-list" id="heroImagePreview"></div>
+        <label class="upload-btn">
+          + Postavi sliku
+          <input type="file" id="heroImageInput" accept="image/*" hidden>
+        </label>
+      </div>
+      <label>Naslov<input type="text" name="title"></label>
+      <label>Podnaslov<textarea name="subtitle" rows="2"></textarea></label>
+      <div class="form-split">
+        <label>Tekst dugmeta<input type="text" name="button_text" placeholder="Pogledaj kolekciju"></label>
+        <label>Link dugmeta<input type="text" name="button_link" placeholder="#products"></label>
+      </div>
+      <div class="form-split">
+        <label class="checkbox-label"><input type="checkbox" name="active" checked> Aktivan</label>
+        <label>Redosled<input type="number" name="sort_order" value="0"></label>
+      </div>
+      <p class="form-error" id="heroFormError" hidden></p>
+      <div class="modal-actions">
+        <button type="button" class="btn-danger" id="deleteHeroBtn" hidden>Obriši slajd</button>
+        <button type="submit" class="btn-primary">Sačuvaj slajd</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ===== ORDER DETAIL MODAL ===== -->
+<div class="modal-overlay" id="orderModalOverlay">
+  <div class="modal order-modal" id="orderModalContent"></div>
+</div>
+
+<script src="/admin/js/admin.js"></script>
+</body>
+</html>
