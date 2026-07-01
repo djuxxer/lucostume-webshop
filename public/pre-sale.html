@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pre-Sale — LU Costume</title>
+<meta name="description" content="Prijavite se za ekskluzivni rani pristup novim kolekcijama LU Costume — pre svih ostalih.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<div class="ribbon-loader" id="pageLoader" aria-hidden="true"></div>
+
+<!-- ===== HEADER ===== -->
+<header class="site-header frosted" id="siteHeader">
+  <div class="header-inner">
+    <button class="burger" id="burgerBtn" aria-label="Otvori meni" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <a href="/" class="logo" id="headerLogo"><img src="/uploads/1782887397036-579507672.png" alt="LU Costume" class="logo-img"></a>
+    <nav class="main-nav" id="mainNav">
+      <button class="nav-close" id="navClose" aria-label="Zatvori meni">&times;</button>
+      <a href="/#products" data-i18n="nav_costumes">Kostimi</a>
+      <a href="/svi-proizvodi.html" data-i18n="nav_all">Svi proizvodi</a>
+      <a href="/vodic-za-velicine.html" data-i18n="nav_sizes">Veličine</a>
+      <a href="/pre-sale.html" data-i18n="nav_presale">Pre-Sale</a>
+      <a href="/kontakt.html" data-i18n="nav_contact">Kontakt</a>
+      <div class="nav-lang-mobile" id="navLangMobile"></div>
+    </nav>
+    <div class="header-right">
+      <button class="cart-toggle" id="cartToggle" aria-label="Otvori korpu">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 4h2l2.4 12.4a2 2 0 0 0 2 1.6h7.2a2 2 0 0 0 2-1.6L20 8H6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="20" r="1.3" fill="currentColor"/><circle cx="17" cy="20" r="1.3" fill="currentColor"/></svg>
+        <span class="cart-count" id="cartCount">0</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ===== PRESALE HERO ===== -->
+<section class="presale-hero">
+  <div class="presale-hero-inner">
+    <p class="eyebrow" style="color:var(--accent-pale)">Ekskluzivni pristup</p>
+    <h1>Pre-Sale Kolekcija</h1>
+    <p>Prijavite se i budite prvi koji saznaju za nove modele — sa ekskluzivnim popustom za rane porudžbine pre zvanične objave.</p>
+    <a href="#presale-form" class="btn btn-primary">Prijavite se</a>
+  </div>
+</section>
+
+<!-- ===== BENEFITS ===== -->
+<section style="padding:70px 24px; max-width:900px; margin:0 auto;">
+  <div class="section-head reveal" style="margin-bottom:44px;">
+    <p class="eyebrow">Zašto Pre-Sale</p>
+    <h2>Vaše prednosti</h2>
+  </div>
+  <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:24px;" class="reveal">
+    <div style="background:var(--white);border-radius:var(--radius-md);padding:28px;box-shadow:var(--shadow-card);text-align:center;">
+      <div style="font-size:2rem;margin-bottom:12px;">🎀</div>
+      <h3 style="font-size:1.1rem;margin-bottom:8px;">Rani pristup</h3>
+      <p style="color:var(--ink-soft);font-size:0.9rem;">Vidite novu kolekciju pre svih ostalih i rezervišete željeni model.</p>
+    </div>
+    <div style="background:var(--white);border-radius:var(--radius-md);padding:28px;box-shadow:var(--shadow-card);text-align:center;">
+      <div style="font-size:2rem;margin-bottom:12px;">💫</div>
+      <h3 style="font-size:1.1rem;margin-bottom:8px;">Posebna cena</h3>
+      <p style="color:var(--ink-soft);font-size:0.9rem;">Pre-Sale cena je uvek niža od regularnog lansiranja — nagrađujemo vernost.</p>
+    </div>
+    <div style="background:var(--white);border-radius:var(--radius-md);padding:28px;box-shadow:var(--shadow-card);text-align:center;">
+      <div style="font-size:2rem;margin-bottom:12px;">✨</div>
+      <h3 style="font-size:1.1rem;margin-bottom:8px;">Ograničen broj</h3>
+      <p style="color:var(--ink-soft);font-size:0.9rem;">Svaki model radi se u ograničenom broju — Pre-Sale garantuje vašu veličinu.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== REGISTER FORM ===== -->
+<section class="presale-register" id="presale-form">
+  <p class="eyebrow">Registracija</p>
+  <h2>Prijavite se za Pre-Sale</h2>
+  <p>Ostavite podatke i obaveštavamo vas čim nova kolekcija bude dostupna za narudžbinu.</p>
+  <form class="presale-form" id="presaleForm">
+    <div id="presaleSuccess" class="presale-success" hidden>
+      ✓ Uspešno ste se prijavili! Kontaktiraćemo vas čim nova kolekcija bude dostupna.
+    </div>
+    <div id="presaleError" class="presale-error" hidden></div>
+    <label>Ime i prezime *<input type="text" name="name" required autocomplete="name"></label>
+    <label>Email *<input type="email" name="email" required autocomplete="email"></label>
+    <label>Telefon<input type="tel" name="phone" autocomplete="tel"></label>
+    <label>Preferirana veličina (opciono)
+      <input type="text" name="size" placeholder="npr. S, M, Child L...">
+    </label>
+    <label>Napomena (šta vas zanima, stil, boja...)
+      <input type="text" name="note" placeholder="npr. tutu roze, velicina S...">
+    </label>
+    <button type="submit" class="btn btn-primary btn-block" id="presaleSubmit">Prijavite se za Pre-Sale</button>
+    <p style="font-size:0.78rem;color:var(--ink-muted);margin-top:14px;text-align:center;">
+      Prijavom pristajete na primanje obaveštenja o novim kolekcijama. Podatke čuvamo isključivo u tu svrhu.
+    </p>
+  </form>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="site-footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <p class="logo" id="footerLogo"><img src="/uploads/1782887397036-579507672.png" alt="LU Costume" class="logo-img"></p>
+      <p id="footerEmail">info@lucostume.rs</p>
+      <p id="footerPhone">+381 64 1234567</p>
+    </div>
+    <div class="footer-links">
+      <h4 data-i18n="footer_pages">Stranice</h4>
+      <a href="/#how-to-order" data-i18n="how_eyebrow">Poručivanje</a>
+      <a href="/vodic-za-velicine.html" data-i18n="nav_sizes">Veličine</a>
+      <a href="/svi-proizvodi.html" data-i18n="nav_all">Svi proizvodi</a>
+      <a href="/kontakt.html" data-i18n="nav_contact">Kontakt</a>
+    </div>
+    <div class="footer-newsletter">
+      <h4 data-i18n="footer_newsletter_title">Ne propusti nove kolekcije</h4>
+      <form id="newsletterForm" class="newsletter-form">
+        <input type="email" placeholder="Tvoj email" required>
+        <button type="submit" data-i18n="footer_newsletter_btn">Prijavi se</button>
+      </form>
+      <p class="newsletter-msg" id="newsletterMsg"></p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p data-i18n="footer_copyright">© 2026 LU Costume. Sva prava zadržana.</p>
+    <div class="footer-bottom-links">
+      <a href="/politika-privatnosti.html">Politika privatnosti</a>
+      <a href="/uslovi-koriscenja.html">Uslovi korišćenja</a>
+      <a href="/povracaj-reklamacije.html">Povraćaj i reklamacije</a>
+    </div>
+  </div>
+</footer>
+
+<!-- Cart + Modals (needed for cart to work on all pages) -->
+<div class="cart-overlay" id="cartOverlay"></div>
+<aside class="cart-drawer" id="cartDrawer">
+  <div class="cart-head">
+    <h3 data-i18n="cart_title">Tvoja korpa</h3>
+    <button class="cart-close" id="cartClose">&times;</button>
+  </div>
+  <div class="cart-items" id="cartItems"></div>
+  <div class="cart-footer" id="cartFooter">
+    <div class="cart-line"><span data-i18n="cart_products">Proizvodi</span><span id="cartSubtotal">0 рсд</span></div>
+    <div class="cart-line"><span data-i18n="cart_shipping">Dostava</span><span id="cartShipping">—</span></div>
+    <div class="cart-line cart-total"><span data-i18n="cart_total">Ukupno</span><span id="cartTotal">0 рсд</span></div>
+    <button class="btn btn-primary btn-block" id="checkoutBtn" data-i18n="cart_checkout">Nastavi na plaćanje</button>
+  </div>
+</aside>
+<div class="modal-overlay" id="checkoutOverlay">
+  <div class="modal checkout-modal">
+    <button class="modal-close" id="checkoutClose">&times;</button>
+    <h3 data-i18n="checkout_title">Podaci za dostavu</h3>
+    <p class="checkout-sub" data-i18n="checkout_sub">Plaćanje pouzećem.</p>
+    <form id="checkoutForm">
+      <div class="form-row"><label data-i18n="checkout_name">Ime i prezime *<input type="text" name="customer_name" required></label></div>
+      <div class="form-row form-row-split">
+        <label data-i18n="checkout_phone">Telefon *<input type="tel" name="phone" required></label>
+        <label data-i18n="checkout_email">Email<input type="email" name="email"></label>
+      </div>
+      <div class="form-row"><label data-i18n="checkout_address">Adresa *<input type="text" name="address" required></label></div>
+      <div class="form-row form-row-split">
+        <label data-i18n="checkout_city">Grad *<input type="text" name="city" required></label>
+        <label data-i18n="checkout_postal">Poštanski broj<input type="text" name="postal_code"></label>
+      </div>
+      <div class="form-row"><label data-i18n="checkout_note">Napomena<textarea name="note" rows="2"></textarea></label></div>
+      <div class="checkout-summary" id="checkoutSummary"></div>
+      <p class="checkout-error" id="checkoutError" hidden></p>
+      <button type="submit" class="btn btn-primary btn-block" id="checkoutSubmit" data-i18n="checkout_confirm">Potvrdi porudžbinu</button>
+    </form>
+  </div>
+</div>
+<div class="modal-overlay" id="successOverlay">
+  <div class="modal success-modal">
+    <div class="success-icon">✓</div>
+    <h3 data-i18n="success_title">Hvala na porudžbini!</h3>
+    <p><span data-i18n="success_order">Broj porudžbine:</span> <strong id="successOrderNumber"></strong></p>
+    <p data-i18n="success_msg">Kontaktiraćemo vas radi potvrde.</p>
+    <button class="btn btn-primary" id="successClose" data-i18n="success_continue">Nastavi kupovinu</button>
+  </div>
+</div>
+<div class="modal-overlay" id="quickViewOverlay">
+  <div class="modal quickview-modal" id="quickViewContent"></div>
+</div>
+
+<script src="/js/i18n.js"></script>
+<script src="/js/app.js"></script>
+<script src="/js/presale.js"></script>
+</body>
+</html>

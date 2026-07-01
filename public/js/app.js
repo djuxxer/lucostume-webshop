@@ -53,14 +53,20 @@
   function renderHero() {
     const track = document.getElementById('heroTrack');
     const dotsWrap = document.getElementById('heroDots');
+    if (!track || !dotsWrap) return;
+
     if (!state.heroSlides.length) {
       track.innerHTML = `
-        <div class="hero-slide no-image">
-          <div class="hero-slide-bg"></div>
+        <div class="hero-slide no-image active">
+          <div class="hero-slide-bg"><div class="hero-pattern"></div></div>
           <div class="hero-content">
             <div class="hero-content-inner">
-              <h1>Kvalitetni, udobni i moderni kostimi koji ističu vaš stil i pokret.</h1>
-              <a href="#products" class="btn btn-primary">Pogledaj kolekciju</a>
+              <p class="hero-eyebrow" data-i18n="hero_eyebrow">Nova kolekcija</p>
+              <h1 class="hero-title" data-i18n="hero_title">Kostimi koji prate <em>svaki pokret</em></h1>
+              <p class="hero-subtitle" data-i18n="hero_subtitle">Ručno birani materijal, izrada koja prati pokret, veličine za svaki nastup.</p>
+              <div class="hero-actions">
+                <a href="#products" class="btn btn-primary" data-i18n="hero_cta">Pogledaj kolekciju</a>
+              </div>
             </div>
           </div>
         </div>`;
@@ -68,14 +74,21 @@
       return;
     }
 
-    track.innerHTML = state.heroSlides.map((slide) => `
-      <div class="hero-slide ${slide.image ? '' : 'no-image'}">
-        <div class="hero-slide-bg" style="${slide.image ? `background-image:url('${escapeHtml(slide.image)}')` : ''}"></div>
+    track.innerHTML = state.heroSlides.map((slide, i) => `
+      <div class="hero-slide ${slide.image ? '' : 'no-image'} ${i === 0 ? 'active' : ''}">
+        <div class="hero-slide-bg">
+          ${slide.image
+            ? `<img src="${escapeHtml(slide.image)}" alt="${escapeHtml(slide.title || 'LU Costume')}" loading="${i === 0 ? 'eager' : 'lazy'}">`
+            : '<div class="hero-pattern"></div>'}
+        </div>
         <div class="hero-content">
           <div class="hero-content-inner">
-            ${slide.title ? `<h1>${escapeHtml(slide.title)}</h1>` : ''}
-            ${slide.subtitle ? `<p>${escapeHtml(slide.subtitle)}</p>` : ''}
-            ${slide.button_text ? `<a href="${escapeHtml(slide.button_link || '#products')}" class="btn btn-primary">${escapeHtml(slide.button_text)}</a>` : ''}
+            ${slide.title ? `<h1 class="hero-title">${escapeHtml(slide.title)}</h1>` : ''}
+            ${slide.subtitle ? `<p class="hero-subtitle">${escapeHtml(slide.subtitle)}</p>` : ''}
+            ${slide.button_text ? `
+              <div class="hero-actions">
+                <a href="${escapeHtml(slide.button_link || '#products')}" class="btn btn-primary">${escapeHtml(slide.button_text)}</a>
+              </div>` : ''}
           </div>
         </div>
       </div>
@@ -95,9 +108,11 @@
   }
 
   function goToHeroSlide(index) {
-    state.currentHeroIndex = index;
     const track = document.getElementById('heroTrack');
-    track.style.transform = `translateX(-${index * 100}%)`;
+    if (!track) return;
+    const slides = track.querySelectorAll('.hero-slide');
+    slides.forEach((s, i) => s.classList.toggle('active', i === index));
+    state.currentHeroIndex = index;
     document.querySelectorAll('.hero-dot').forEach((d, i) => d.classList.toggle('active', i === index));
   }
 
@@ -115,6 +130,7 @@
   // =========================================================
   function renderCategoryFilter() {
     const wrap = document.getElementById('categoryFilter');
+    if (!wrap) return;
     const cats = [...new Set(state.products.map((p) => p.category).filter(Boolean))];
     if (cats.length < 2) { wrap.innerHTML = ''; return; }
     wrap.innerHTML = [`<button class="cat-pill active" data-cat="all">Sve</button>`]
@@ -138,6 +154,7 @@
   function renderProducts() {
     const grid = document.getElementById('productsGrid');
     const emptyState = document.getElementById('productsEmpty');
+    if (!grid) return;
     const filtered = state.activeCategory === 'all'
       ? state.products
       : state.products.filter((p) => p.category === state.activeCategory);
@@ -151,18 +168,24 @@
 
     grid.innerHTML = filtered.map((p) => {
       const img = getMainImage(p);
+      const sizes = (p.sizes || '').split(',').map((s) => s.trim()).filter(Boolean);
+      const soldOut = (p.stock || 0) <= 0;
       return `
-      <div class="product-card" data-id="${p.id}">
+      <div class="product-card ${soldOut ? 'sold-out' : ''}" data-id="${p.id}">
         <div class="product-img-wrap ${img ? '' : 'no-img'}" data-quickview="${p.id}">
           ${img ? `<img src="${escapeHtml(img)}" alt="${escapeHtml(p.name)}" loading="lazy">` : `<span>${escapeHtml(p.name)}</span>`}
+          ${soldOut ? `<span class="sold-out-badge">Rasprodato</span>` : ''}
           <button class="quick-view-btn" data-quickview="${p.id}">Brzi pregled</button>
         </div>
         <div class="product-info">
           ${p.category ? `<span class="product-cat">${escapeHtml(p.category)}</span>` : ''}
           <span class="product-name">${escapeHtml(p.name)}</span>
           <span class="product-price">${formatPrice(p.price)}</span>
+          ${sizes.length ? `<span class="product-sizes">${sizes.map((s) => escapeHtml(s)).join(' · ')}</span>` : ''}
           <div class="product-actions">
-            <button class="add-to-cart-btn" data-add="${p.id}">Dodaj u korpu</button>
+            ${soldOut
+              ? `<button class="add-to-cart-btn sold-out-btn" disabled>Rasprodato</button>`
+              : `<button class="add-to-cart-btn" data-add="${p.id}">Dodaj u korpu</button>`}
           </div>
         </div>
       </div>`;
@@ -193,13 +216,17 @@
     if (!p) return;
     const img = getMainImage(p);
     const sizes = (p.sizes || '').split(',').map((s) => s.trim()).filter(Boolean);
+    const soldOut = (p.stock || 0) <= 0;
     let selectedSize = sizes[0] || '';
 
     const content = document.getElementById('quickViewContent');
     content.innerHTML = `
       <button class="modal-close" id="qvClose" aria-label="Zatvori">&times;</button>
       <div class="qv-layout">
-        <div class="qv-image">${img ? `<img src="${escapeHtml(img)}" alt="${escapeHtml(p.name)}">` : ''}</div>
+        <div class="qv-image">
+          ${img ? `<img src="${escapeHtml(img)}" alt="${escapeHtml(p.name)}">` : ''}
+          ${soldOut ? `<span class="sold-out-badge">Rasprodato</span>` : ''}
+        </div>
         <div class="qv-info">
           ${p.category ? `<span class="product-cat">${escapeHtml(p.category)}</span>` : ''}
           <h3>${escapeHtml(p.name)}</h3>
@@ -209,7 +236,9 @@
             <div class="qv-sizes" id="qvSizes">
               ${sizes.map((s, i) => `<button class="qv-size-btn ${i === 0 ? 'active' : ''}" data-size="${escapeHtml(s)}">${escapeHtml(s)}</button>`).join('')}
             </div>` : ''}
-          <button class="add-to-cart-btn" id="qvAddBtn">Dodaj u korpu</button>
+          ${soldOut
+            ? `<button class="add-to-cart-btn sold-out-btn" disabled>Rasprodato</button>`
+            : `<button class="add-to-cart-btn" id="qvAddBtn">Dodaj u korpu</button>`}
         </div>
       </div>
     `;
@@ -220,12 +249,14 @@
         content.querySelectorAll('.qv-size-btn').forEach((b) => b.classList.toggle('active', b === btn));
       });
     });
-    content.querySelector('#qvAddBtn').addEventListener('click', () => {
-      addToCart(p, selectedSize);
-      const btn = content.querySelector('#qvAddBtn');
-      btn.textContent = 'Dodato ✓';
-      setTimeout(() => closeAllModals(), 700);
-    });
+    const qvAddBtn = content.querySelector('#qvAddBtn');
+    if (qvAddBtn) {
+      qvAddBtn.addEventListener('click', () => {
+        addToCart(p, selectedSize);
+        qvAddBtn.textContent = 'Dodato ✓';
+        setTimeout(() => closeAllModals(), 700);
+      });
+    }
 
     openModal('quickViewOverlay');
   }
@@ -249,7 +280,8 @@
 
   function updateCartCount() {
     const count = state.cart.reduce((sum, i) => sum + i.qty, 0);
-    document.getElementById('cartCount').textContent = count;
+    const el = document.getElementById('cartCount');
+    if (el) el.textContent = count;
   }
 
   function getCartSubtotal() {
@@ -359,6 +391,9 @@
       return;
     }
 
+    // Get selected payment method
+    const payMethod = document.querySelector('input[name="payment_method"]:checked')?.value || 'pouzece';
+
     const formData = new FormData(form);
     const payload = {
       customer_name: formData.get('customer_name'),
@@ -368,6 +403,7 @@
       city: formData.get('city'),
       postal_code: formData.get('postal_code'),
       note: formData.get('note'),
+      payment_method: payMethod,
       items: state.cart.map((i) => ({ id: i.id, qty: i.qty, size: i.size })),
     };
 
@@ -390,8 +426,37 @@
       errorEl.hidden = false;
     } finally {
       submitBtn.disabled = false;
-      submitBtn.textContent = 'Potvrdi porudžbinu (plaćanje pouzećem)';
+      submitBtn.textContent = 'Potvrdi porudžbinu';
     }
+  }
+
+  function initPaymentSwitch() {
+    const opts = document.querySelectorAll('input[name="payment_method"]');
+    if (!opts.length) return;
+    const infos = {
+      pouzece: document.getElementById('payInfoPouzece'),
+      paypal: document.getElementById('payInfoPaypal'),
+      nbs_qr: document.getElementById('payInfoNbs'),
+    };
+    opts.forEach((opt) => {
+      opt.addEventListener('change', () => {
+        Object.entries(infos).forEach(([key, el]) => {
+          if (el) el.hidden = key !== opt.value;
+        });
+      });
+    });
+
+    // Load NBS QR and PayPal link from settings when data loads
+    document.addEventListener('lucostume:dataLoaded', () => {
+      const qrUrl = state.settings.nbs_qr_url;
+      const qrEl = document.getElementById('checkoutNbsQr');
+      if (qrUrl && qrEl) {
+        qrEl.innerHTML = `<img src="${escapeHtml(qrUrl)}" alt="NBS IPS QR kod">`;
+      }
+      const paypalLink = state.settings.paypal_link;
+      const paypalA = document.getElementById('checkoutPaypalLink');
+      if (paypalLink && paypalA) paypalA.href = paypalLink;
+    });
   }
 
   // =========================================================
@@ -416,40 +481,109 @@
   // EVENT BINDINGS
   // =========================================================
   function bindEvents() {
-    document.getElementById('burgerBtn').addEventListener('click', () => {
-      const nav = document.getElementById('mainNav');
-      const btn = document.getElementById('burgerBtn');
-      const isOpen = nav.classList.toggle('open');
-      btn.setAttribute('aria-expanded', isOpen);
-    });
+    const burgerBtn = document.getElementById('burgerBtn');
+    if (burgerBtn) {
+      burgerBtn.addEventListener('click', () => {
+        const nav = document.getElementById('mainNav');
+        const isOpen = nav.classList.toggle('open');
+        burgerBtn.classList.toggle('open', isOpen);
+        burgerBtn.setAttribute('aria-expanded', isOpen);
+        document.body.style.overflow = isOpen ? 'hidden' : '';
+      });
+    }
     document.querySelectorAll('.main-nav a').forEach((a) => {
-      a.addEventListener('click', () => document.getElementById('mainNav').classList.remove('open'));
+      a.addEventListener('click', () => {
+        document.getElementById('mainNav')?.classList.remove('open');
+        document.getElementById('burgerBtn')?.classList.remove('open');
+        document.body.style.overflow = '';
+      });
     });
 
-    document.getElementById('cartToggle').addEventListener('click', openCart);
-    document.getElementById('cartClose').addEventListener('click', closeCart);
-    document.getElementById('cartOverlay').addEventListener('click', closeCart);
+    // Nav close X button (mobile)
+    const navClose = document.getElementById('navClose');
+    if (navClose) {
+      navClose.addEventListener('click', () => {
+        document.getElementById('mainNav')?.classList.remove('open');
+        document.getElementById('burgerBtn')?.classList.remove('open');
+        document.body.style.overflow = '';
+      });
+    }
 
-    document.getElementById('checkoutBtn').addEventListener('click', () => {
-      if (!state.cart.length) return;
-      renderCheckoutSummary();
-      closeCart();
-      openModal('checkoutOverlay');
-    });
-    document.getElementById('checkoutClose').addEventListener('click', closeAllModals);
-    document.getElementById('checkoutForm').addEventListener('submit', submitOrder);
+    // Header scroll: transparent on hero (homepage only), frosted on sub-pages always
+    const header = document.getElementById('siteHeader');
+    if (header) {
+      const isHomePage = window.location.pathname === '/' || window.location.pathname === '/index.html';
+      if (isHomePage) {
+        const onScroll = () => {
+          const past = window.scrollY > 60;
+          header.classList.toggle('frosted', past);
+          header.classList.toggle('transparent', !past);
+        };
+        window.addEventListener('scroll', onScroll, { passive: true });
+        onScroll();
+      } else {
+        // Sub-pages: always frosted
+        header.classList.remove('transparent');
+        header.classList.add('frosted');
+      }
+    }
 
-    document.getElementById('successClose').addEventListener('click', closeAllModals);
+    // Scroll reveal
+    const revealEls = document.querySelectorAll('.reveal');
+    if (revealEls.length) {
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach((e) => {
+            if (e.isIntersecting) {
+              e.target.classList.add('visible');
+              io.unobserve(e.target);
+            }
+          });
+        }, { threshold: 0, rootMargin: '0px 0px -40px 0px' });
+        revealEls.forEach((el) => io.observe(el));
+      } else {
+        // Fallback: show all immediately
+        revealEls.forEach((el) => el.classList.add('visible'));
+      }
+    }
+
+    const cartToggle = document.getElementById('cartToggle');
+    if (cartToggle) cartToggle.addEventListener('click', openCart);
+    const cartClose = document.getElementById('cartClose');
+    if (cartClose) cartClose.addEventListener('click', closeCart);
+    const cartOverlay = document.getElementById('cartOverlay');
+    if (cartOverlay) cartOverlay.addEventListener('click', closeCart);
+
+    const checkoutBtn = document.getElementById('checkoutBtn');
+    if (checkoutBtn) {
+      checkoutBtn.addEventListener('click', () => {
+        if (!state.cart.length) return;
+        renderCheckoutSummary();
+        closeCart();
+        openModal('checkoutOverlay');
+      });
+    }
+    const checkoutClose = document.getElementById('checkoutClose');
+    if (checkoutClose) checkoutClose.addEventListener('click', closeAllModals);
+    const checkoutForm = document.getElementById('checkoutForm');
+    if (checkoutForm) checkoutForm.addEventListener('submit', submitOrder);
+    initPaymentSwitch();
+
+    const successClose = document.getElementById('successClose');
+    if (successClose) successClose.addEventListener('click', closeAllModals);
 
     document.querySelectorAll('.modal-overlay').forEach((overlay) => {
       overlay.addEventListener('click', (e) => { if (e.target === overlay) closeAllModals(); });
     });
 
-    document.getElementById('newsletterForm').addEventListener('submit', (e) => {
-      e.preventDefault();
-      document.getElementById('newsletterMsg').textContent = 'Hvala na prijavi!';
-      e.target.reset();
-    });
+    const newsletterForm = document.getElementById('newsletterForm');
+    if (newsletterForm) {
+      newsletterForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        document.getElementById('newsletterMsg').textContent = 'Hvala na prijavi!';
+        e.target.reset();
+      });
+    }
 
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') { closeAllModals(); closeCart(); }
@@ -470,10 +604,21 @@
     renderProducts();
 
     // settings for footer
-    if (state.settings.shop_email) document.getElementById('footerEmail').textContent = state.settings.shop_email;
-    if (state.settings.shop_phone) document.getElementById('footerPhone').textContent = state.settings.shop_phone;
+    const footerEmail = document.getElementById('footerEmail');
+    const footerPhone = document.getElementById('footerPhone');
+    if (footerEmail && state.settings.shop_email) footerEmail.textContent = state.settings.shop_email;
+    if (footerPhone && state.settings.shop_phone) footerPhone.textContent = state.settings.shop_phone;
 
-    document.getElementById('pageLoader').classList.add('loaded');
+    // settings for contact page
+    const contactEmail = document.getElementById('contactEmail');
+    const contactPhone = document.getElementById('contactPhone');
+    if (contactEmail && state.settings.shop_email) contactEmail.textContent = state.settings.shop_email;
+    if (contactPhone && state.settings.shop_phone) contactPhone.textContent = state.settings.shop_phone;
+
+    const loader = document.getElementById('pageLoader');
+    if (loader) loader.classList.add('loaded');
+
+    document.dispatchEvent(new CustomEvent('lucostume:dataLoaded'));
   }
 
   init();

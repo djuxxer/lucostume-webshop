@@ -8,9 +8,11 @@
     products: [],
     heroSlides: [],
     orders: [],
+    messages: [],
+    presale: [],
     settings: {},
     currentView: 'products',
-    productImages: [], // working list of image URLs for the open product modal
+    productImages: [],
     heroImage: '',
   };
 
@@ -62,8 +64,13 @@
   async function showApp() {
     document.getElementById('loginScreen').hidden = true;
     document.getElementById('adminApp').hidden = false;
-    await loadAllData();
-    renderCurrentView();
+    try {
+      await loadAllData();
+      renderCurrentView();
+    } catch (e) {
+      console.error('Greška pri učitavanju admin panela:', e);
+      alert('Greška pri učitavanju podataka: ' + e.message + '\n\nProveri Console (F12) za detalje.');
+    }
   }
 
   document.getElementById('loginForm').addEventListener('submit', async (e) => {
@@ -104,6 +111,8 @@
     if (state.currentView === 'products') renderProductsTable();
     if (state.currentView === 'hero') renderHeroList();
     if (state.currentView === 'orders') renderOrdersTable();
+    if (state.currentView === 'messages') renderMessages();
+    if (state.currentView === 'presale') renderPresale();
     if (state.currentView === 'settings') renderSettingsForms();
   }
 
@@ -111,20 +120,20 @@
   // DATA LOADING
   // =========================================================
   async function loadAllData() {
-    try {
-      const [products, hero, orders, settings] = await Promise.all([
-        api('/api/admin/products'),
-        api('/api/admin/hero'),
-        api('/api/admin/orders'),
-        api('/api/admin/settings'),
-      ]);
-      state.products = products;
-      state.heroSlides = hero;
-      state.orders = orders;
-      state.settings = settings;
-    } catch (e) {
-      console.error(e);
-    }
+    const [products, hero, orders, settings, messages, presale] = await Promise.all([
+      api('/api/admin/products'),
+      api('/api/admin/hero'),
+      api('/api/admin/orders'),
+      api('/api/admin/settings'),
+      api('/api/admin/messages'),
+      api('/api/admin/presale'),
+    ]);
+    state.products = products;
+    state.heroSlides = hero;
+    state.orders = orders;
+    state.settings = settings;
+    state.messages = messages;
+    state.presale = presale;
   }
 
   // =========================================================
@@ -497,6 +506,100 @@
   }
 
   // =========================================================
+  // MESSAGES
+  // =========================================================
+  function renderMessages() {
+    const list = document.getElementById('messagesList');
+    const emptyMsg = document.getElementById('messagesEmptyMsg');
+    if (!state.messages.length) {
+      list.innerHTML = '';
+      emptyMsg.hidden = false;
+      return;
+    }
+    emptyMsg.hidden = true;
+    list.innerHTML = state.messages.map((m) => `
+      <div class="message-card ${m.read ? '' : 'unread'}" data-id="${m.id}">
+        <div class="message-card-head">
+          <div>
+            <strong>${escapeHtml(m.name)}</strong>
+            ${!m.read ? '<span class="message-badge">Novo</span>' : ''}
+          </div>
+          <span class="message-date">${formatDate(m.created_at)}</span>
+        </div>
+        <div class="message-contact-line">
+          <a href="mailto:${escapeHtml(m.email)}">${escapeHtml(m.email)}</a>
+          ${m.phone ? ` · <a href="tel:${escapeHtml(m.phone)}">${escapeHtml(m.phone)}</a>` : ''}
+        </div>
+        <p class="message-body">${escapeHtml(m.message)}</p>
+        <div class="message-actions">
+          ${!m.read ? `<button data-mark-read="${m.id}">Označi pročitano</button>` : ''}
+          <button data-delete-msg="${m.id}" class="danger-link">Obriši</button>
+        </div>
+      </div>
+    `).join('');
+
+    list.querySelectorAll('[data-mark-read]').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        try {
+          await api(`/api/admin/messages/${btn.dataset.markRead}/read`, { method: 'PUT' });
+          const msg = state.messages.find((m) => m.id === parseInt(btn.dataset.markRead));
+          if (msg) msg.read = 1;
+          renderMessages();
+        } catch (err) {
+          alert('Greška: ' + err.message);
+        }
+      });
+    });
+    list.querySelectorAll('[data-delete-msg]').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        if (!confirm('Obrisati ovu poruku?')) return;
+        try {
+          await api(`/api/admin/messages/${btn.dataset.deleteMsg}`, { method: 'DELETE' });
+          state.messages = state.messages.filter((m) => m.id !== parseInt(btn.dataset.deleteMsg));
+          renderMessages();
+        } catch (err) {
+          alert('Greška: ' + err.message);
+        }
+      });
+    });
+  }
+
+  // =========================================================
+  // PRESALE
+  // =========================================================
+  function renderPresale() {
+    const tbody = document.getElementById('presaleTbody');
+    const emptyMsg = document.getElementById('presaleEmptyMsg');
+    if (!state.presale.length) {
+      tbody.innerHTML = '';
+      emptyMsg.hidden = false;
+      return;
+    }
+    emptyMsg.hidden = true;
+    tbody.innerHTML = state.presale.map((s) => `
+      <tr>
+        <td>${escapeHtml(s.name)}</td>
+        <td><a href="mailto:${escapeHtml(s.email)}">${escapeHtml(s.email)}</a></td>
+        <td>${escapeHtml(s.phone || '—')}</td>
+        <td>${escapeHtml(s.size || '—')}</td>
+        <td>${escapeHtml(s.note || '—')}</td>
+        <td>${formatDate(s.created_at)}</td>
+        <td class="row-actions"><button data-del-presale="${s.id}" class="danger-btn">Obriši</button></td>
+      </tr>
+    `).join('');
+    tbody.querySelectorAll('[data-del-presale]').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        if (!confirm('Obrisati ovu registraciju?')) return;
+        try {
+          await api(`/api/admin/presale/${btn.dataset.delPresale}`, { method: 'DELETE' });
+          state.presale = state.presale.filter((s) => s.id !== parseInt(btn.dataset.delPresale));
+          renderPresale();
+        } catch (err) { alert('Greška: ' + err.message); }
+      });
+    });
+  }
+
+  // =========================================================
   // SETTINGS
   // =========================================================
   function renderSettingsForms() {
@@ -509,7 +612,80 @@
     shopForm.elements.shop_name.value = s.shop_name || '';
     shopForm.elements.shop_email.value = s.shop_email || '';
     shopForm.elements.shop_phone.value = s.shop_phone || '';
+    if (shopForm.elements.paypal_link) shopForm.elements.paypal_link.value = s.paypal_link || '';
+
+    renderLogoPreview();
+    renderNbsQrPreview();
   }
+
+  function renderLogoPreview() {
+    const preview = document.getElementById('logoPreview');
+    const removeBtn = document.getElementById('logoRemoveBtn');
+    const url = state.settings.logo_url || '';
+    if (url) {
+      preview.innerHTML = `<img src="${escapeHtml(url)}" alt="Logo">`;
+      removeBtn.hidden = false;
+    } else {
+      preview.innerHTML = `<span class="logo-preview-empty">Nema loga</span>`;
+      removeBtn.hidden = true;
+    }
+  }
+
+  function renderNbsQrPreview() {
+    const preview = document.getElementById('nbsQrPreview');
+    const removeBtn = document.getElementById('nbsQrRemoveBtn');
+    if (!preview) return;
+    const url = state.settings.nbs_qr_url || '';
+    if (url) {
+      preview.innerHTML = `<img src="${escapeHtml(url)}" alt="NBS QR">`;
+      removeBtn.hidden = false;
+    } else {
+      preview.innerHTML = `<span class="logo-preview-empty">Nema QR koda</span>`;
+      removeBtn.hidden = true;
+    }
+  }
+
+  document.getElementById('logoFileInput').addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const fd = new FormData();
+    fd.append('image', file);
+    try {
+      const result = await api('/api/admin/upload', { method: 'POST', body: fd });
+      await api('/api/admin/settings', { method: 'PUT', body: JSON.stringify({ logo_url: result.url }) });
+      state.settings.logo_url = result.url;
+      renderLogoPreview();
+    } catch (err) { alert('Greška: ' + err.message); }
+    e.target.value = '';
+  });
+
+  document.getElementById('logoRemoveBtn').addEventListener('click', async () => {
+    if (!confirm('Ukloniti logo?')) return;
+    await api('/api/admin/settings', { method: 'PUT', body: JSON.stringify({ logo_url: '' }) });
+    state.settings.logo_url = '';
+    renderLogoPreview();
+  });
+
+  document.getElementById('nbsQrFileInput').addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const fd = new FormData();
+    fd.append('image', file);
+    try {
+      const result = await api('/api/admin/upload', { method: 'POST', body: fd });
+      await api('/api/admin/settings', { method: 'PUT', body: JSON.stringify({ nbs_qr_url: result.url }) });
+      state.settings.nbs_qr_url = result.url;
+      renderNbsQrPreview();
+    } catch (err) { alert('Greška: ' + err.message); }
+    e.target.value = '';
+  });
+
+  document.getElementById('nbsQrRemoveBtn').addEventListener('click', async () => {
+    if (!confirm('Ukloniti NBS QR kod?')) return;
+    await api('/api/admin/settings', { method: 'PUT', body: JSON.stringify({ nbs_qr_url: '' }) });
+    state.settings.nbs_qr_url = '';
+    renderNbsQrPreview();
+  });
 
   document.getElementById('shippingForm').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -534,6 +710,7 @@
         shop_name: form.elements.shop_name.value,
         shop_email: form.elements.shop_email.value,
         shop_phone: form.elements.shop_phone.value,
+        paypal_link: form.elements.paypal_link?.value || '',
       }),
     });
     await loadAllData();

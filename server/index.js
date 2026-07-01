@@ -108,6 +108,9 @@ app.get('/api/settings/public', (req, res) => {
     shop_name: getSetting('shop_name', 'LU Costume'),
     shop_email: getSetting('shop_email', ''),
     shop_phone: getSetting('shop_phone', ''),
+    logo_url: getSetting('logo_url', ''),
+    nbs_qr_url: getSetting('nbs_qr_url', ''),
+    paypal_link: getSetting('paypal_link', 'https://paypal.me/lucostume'),
   });
 });
 
@@ -168,6 +171,49 @@ app.post('/api/orders', (req, res) => {
   );
 
   res.json({ success: true, order_number, subtotal, shipping_cost, total });
+});
+
+// --- Contact form ---
+app.post('/api/contact', (req, res) => {
+  const { name, email, phone, message } = req.body;
+  if (!name || !email || !message) {
+    return res.status(400).json({ error: 'Popunite ime, email i poruku.' });
+  }
+  db.prepare(`
+    INSERT INTO contact_messages (name, email, phone, message)
+    VALUES (?, ?, ?, ?)
+  `).run(name, email, phone || '', message);
+  res.json({ success: true });
+});
+
+// --- Pre-sale registration ---
+app.post('/api/presale', (req, res) => {
+  const { name, email, phone, size, note } = req.body;
+  if (!name || !email) {
+    return res.status(400).json({ error: 'Ime i email su obavezni.' });
+  }
+  try {
+    db.prepare(`
+      INSERT INTO presale_subscribers (name, email, phone, size, note)
+      VALUES (?, ?, ?, ?, ?)
+    `).run(name, email, phone || '', size || '', note || '');
+    res.json({ success: true });
+  } catch (e) {
+    if (e.message && e.message.includes('UNIQUE')) {
+      return res.status(400).json({ error: 'Ova email adresa je već registrovana.' });
+    }
+    res.status(500).json({ error: 'Greška pri registraciji.' });
+  }
+});
+
+app.get('/api/admin/presale', requireAdmin, (req, res) => {
+  const rows = db.prepare('SELECT * FROM presale_subscribers ORDER BY id DESC').all();
+  res.json(rows);
+});
+
+app.delete('/api/admin/presale/:id', requireAdmin, (req, res) => {
+  db.prepare('DELETE FROM presale_subscribers WHERE id = ?').run(req.params.id);
+  res.json({ success: true });
 });
 
 // =========================================================
@@ -364,6 +410,25 @@ app.put('/api/admin/orders/:id/status', requireAdmin, (req, res) => {
 
 app.delete('/api/admin/orders/:id', requireAdmin, (req, res) => {
   db.prepare('DELETE FROM orders WHERE id = ?').run(req.params.id);
+  res.json({ success: true });
+});
+
+// =========================================================
+// ADMIN: CONTACT MESSAGES (protected)
+// =========================================================
+
+app.get('/api/admin/messages', requireAdmin, (req, res) => {
+  const rows = db.prepare('SELECT * FROM contact_messages ORDER BY id DESC').all();
+  res.json(rows);
+});
+
+app.put('/api/admin/messages/:id/read', requireAdmin, (req, res) => {
+  db.prepare('UPDATE contact_messages SET read = 1 WHERE id = ?').run(req.params.id);
+  res.json({ success: true });
+});
+
+app.delete('/api/admin/messages/:id', requireAdmin, (req, res) => {
+  db.prepare('DELETE FROM contact_messages WHERE id = ?').run(req.params.id);
   res.json({ success: true });
 });
 

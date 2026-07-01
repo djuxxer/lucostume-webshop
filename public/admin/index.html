@@ -30,6 +30,8 @@
       <button class="nav-item active" data-view="products">📦 Proizvodi</button>
       <button class="nav-item" data-view="hero">🖼️ Hero slike</button>
       <button class="nav-item" data-view="orders">🧾 Porudžbine</button>
+      <button class="nav-item" data-view="messages">✉️ Poruke</button>
+      <button class="nav-item" data-view="presale">🎀 Pre-Sale</button>
       <button class="nav-item" data-view="settings">⚙️ Podešavanja</button>
     </nav>
     <div class="sidebar-footer">
@@ -83,6 +85,33 @@
       </div>
     </section>
 
+    <!-- ---------- MESSAGES VIEW ---------- -->
+    <section class="view" id="view-messages" hidden>
+      <div class="view-head">
+        <h2>Poruke</h2>
+      </div>
+      <p class="view-desc">Poruke poslate kroz kontakt formu na sajtu.</p>
+      <div class="messages-list" id="messagesList"></div>
+      <p class="table-empty" id="messagesEmptyMsg" hidden>Još nema poruka.</p>
+    </section>
+
+    <!-- ---------- PRESALE VIEW ---------- -->
+    <section class="view" id="view-presale" hidden>
+      <div class="view-head">
+        <h2>Pre-Sale registracije</h2>
+      </div>
+      <p class="view-desc">Korisnici koji su se prijavili za Pre-Sale obaveštenja.</p>
+      <div class="table-wrap">
+        <table class="data-table" id="presaleTable">
+          <thead>
+            <tr><th>Ime</th><th>Email</th><th>Telefon</th><th>Veličina</th><th>Napomena</th><th>Datum</th><th></th></tr>
+          </thead>
+          <tbody id="presaleTbody"></tbody>
+        </table>
+        <p class="table-empty" id="presaleEmptyMsg" hidden>Još nema prijavljenih korisnika.</p>
+      </div>
+    </section>
+
     <!-- ---------- SETTINGS VIEW ---------- -->
     <section class="view" id="view-settings" hidden>
       <div class="view-head"><h2>Podešavanja</h2></div>
@@ -97,13 +126,44 @@
       </div>
 
       <div class="settings-card">
+        <h3>Logo</h3>
+        <p class="settings-hint">Otpremi sliku loga (PNG sa providnom pozadinom najbolje izgleda). Ako ne otpremiš sliku, koristi se tekstualni logo "LU Costume".</p>
+        <div class="logo-upload-row">
+          <div class="logo-preview" id="logoPreview"></div>
+          <div class="logo-upload-actions">
+            <label class="upload-btn">
+              Otpremi logo
+              <input type="file" id="logoFileInput" accept="image/*" hidden>
+            </label>
+            <button type="button" class="btn-text" id="logoRemoveBtn" hidden>Ukloni logo</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-card">
         <h3>Podaci o radnji</h3>
         <form id="shopInfoForm" class="settings-form">
           <label>Naziv radnje<input type="text" name="shop_name"></label>
           <label>Email<input type="email" name="shop_email"></label>
           <label>Telefon<input type="text" name="shop_phone"></label>
+          <label>PayPal.me link<input type="text" name="paypal_link" placeholder="https://paypal.me/..."></label>
           <button type="submit" class="btn-primary">Sačuvaj</button>
         </form>
+      </div>
+
+      <div class="settings-card">
+        <h3>NBS IPS QR kod</h3>
+        <p class="settings-hint">Otpremi sliku NBS IPS QR koda — prikazuje se u checkout prozoru za plaćanje.</p>
+        <div class="logo-upload-row">
+          <div class="logo-preview" id="nbsQrPreview"></div>
+          <div class="logo-upload-actions">
+            <label class="upload-btn">
+              Otpremi QR kod
+              <input type="file" id="nbsQrFileInput" accept="image/*" hidden>
+            </label>
+            <button type="button" class="btn-text" id="nbsQrRemoveBtn" hidden>Ukloni</button>
+          </div>
+        </div>
       </div>
 
       <div class="settings-card">

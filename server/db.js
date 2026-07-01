@@ -66,6 +66,26 @@ db.exec(`
     password_hash TEXT NOT NULL
   );
 
+  CREATE TABLE IF NOT EXISTS contact_messages (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    email TEXT NOT NULL,
+    phone TEXT DEFAULT '',
+    message TEXT NOT NULL,
+    read INTEGER DEFAULT 0,
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP
+  );
+
+  CREATE TABLE IF NOT EXISTS presale_subscribers (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    email TEXT NOT NULL UNIQUE,
+    phone TEXT DEFAULT '',
+    size TEXT DEFAULT '',
+    note TEXT DEFAULT '',
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP
+  );
+
   CREATE TABLE IF NOT EXISTS settings (
     key TEXT PRIMARY KEY,
     value TEXT

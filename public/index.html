@@ -7,167 +7,231 @@
 <meta name="description" content="Kvalitetni, udobni i moderni baletski kostimi koji ističu vaš stil i pokret. Online prodavnica sa dostavom pouzećem.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
 
-<div class="ribbon-loader" id="pageLoader" aria-hidden="true"><span></span></div>
+<div class="ribbon-loader" id="pageLoader" aria-hidden="true"></div>
 
 <!-- ===== HEADER ===== -->
-<header class="site-header" id="siteHeader">
+<header class="site-header frosted" id="siteHeader">
   <div class="header-inner">
     <button class="burger" id="burgerBtn" aria-label="Otvori meni" aria-expanded="false">
       <span></span><span></span><span></span>
     </button>
-    <a href="/" class="logo">LU<span>Costume</span></a>
+    <a href="/" class="logo" id="headerLogo"><img src="/uploads/1782887397036-579507672.png" alt="LU Costume" class="logo-img"></a>
     <nav class="main-nav" id="mainNav">
-      <a href="/#products">Kostimi</a>
-      <a href="/#how-to-order">Kako poručiti</a>
-      <a href="/#size-guide">Vodič za veličine</a>
-      <a href="/#contact">Kontakt</a>
+      <button class="nav-close" id="navClose" aria-label="Zatvori meni">&times;</button>
+      <a href="/#products" data-i18n="nav_costumes">Kostimi</a>
+      <a href="/svi-proizvodi.html" data-i18n="nav_all">Svi proizvodi</a>
+      <a href="/vodic-za-velicine.html" data-i18n="nav_sizes">Veličine</a>
+      <a href="/pre-sale.html" data-i18n="nav_presale">Pre-Sale</a>
+      <a href="/kontakt.html" data-i18n="nav_contact">Kontakt</a>
+      <div class="nav-lang-mobile" id="navLangMobile"></div>
     </nav>
-    <button class="cart-toggle" id="cartToggle" aria-label="Otvori korpu">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 4h2l2.4 12.4a2 2 0 0 0 2 1.6h7.2a2 2 0 0 0 2-1.6L20 8H6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="20" r="1.3" fill="currentColor"/><circle cx="17" cy="20" r="1.3" fill="currentColor"/></svg>
-      <span class="cart-count" id="cartCount">0</span>
-    </button>
+    <div class="header-right">
+      <!-- lang switcher injected by i18n.js -->
+      <button class="cart-toggle" id="cartToggle" aria-label="Otvori korpu">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 4h2l2.4 12.4a2 2 0 0 0 2 1.6h7.2a2 2 0 0 0 2-1.6L20 8H6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="20" r="1.3" fill="currentColor"/><circle cx="17" cy="20" r="1.3" fill="currentColor"/></svg>
+        <span class="cart-count" id="cartCount">0</span>
+      </button>
+    </div>
   </div>
 </header>
 
 <!-- ===== HERO ===== -->
 <section class="hero" id="hero">
-  <div class="hero-track" id="heroTrack">
-    <!-- injected by js -->
-  </div>
+  <div class="hero-track" id="heroTrack"></div>
   <div class="hero-dots" id="heroDots"></div>
 </section>
 
 <!-- ===== PRODUCTS ===== -->
 <section class="products-section" id="products">
-  <div class="section-head">
-    <p class="eyebrow">Kolekcija</p>
-    <h2>Kostimi za scenu i nastup</h2>
-    <p class="section-sub">Svaki komad je rađen da pratiti pokret — od probe do reflektora.</p>
+  <div class="section-head reveal">
+    <p class="eyebrow" data-i18n="products_eyebrow">Kolekcija</p>
+    <h2 data-i18n="products_title">Kostimi za scenu i nastup</h2>
+    <p class="section-sub" data-i18n="products_sub">Svaki komad je rađen da prati pokret — od probe do reflektora.</p>
   </div>
-
   <div class="category-filter" id="categoryFilter"></div>
-
-  <div class="products-grid" id="productsGrid">
-    <!-- injected by js -->
-  </div>
-  <p class="empty-state" id="productsEmpty" hidden>Trenutno nema dostupnih kostima. Vrati se uskoro — kolekcija se redovno dopunjuje.</p>
+  <div class="products-grid" id="productsGrid"></div>
+  <p class="empty-state" id="productsEmpty" hidden>Trenutno nema dostupnih kostima.</p>
 </section>
 
 <!-- ===== HOW TO ORDER ===== -->
 <section class="how-to-order" id="how-to-order">
-  <div class="how-card">
-    <p class="eyebrow">Poručivanje</p>
-    <h2>Kako poručiti?</h2>
-    <p>Izaberi kostim, dodaj u korpu, i potvrdi porudžbinu. Plaćaš pouzećem — kurir naplaćuje prilikom isporuke, bez online plaćanja unapred.</p>
+  <div class="how-card reveal">
+    <p class="eyebrow" data-i18n="how_eyebrow">Poručivanje</p>
+    <h2 data-i18n="how_title">Kako poručiti?</h2>
+    <p data-i18n="how_text">Izaberi kostim, dodaj u korpu, i potvrdi porudžbinu. Plaćaš pouzećem — kurir naplaćuje prilikom isporuke.</p>
     <ol class="steps">
-      <li><span>1</span> Izaberi kostim i veličinu</li>
-      <li><span>2</span> Dodaj u korpu i unesi podatke za dostavu</li>
-      <li><span>3</span> Plati pouzećem kad paket stigne</li>
+      <li><span class="step-num">1</span><span data-i18n="how_step1">Izaberi kostim i veličinu</span></li>
+      <li><span class="step-num">2</span><span data-i18n="how_step2">Dodaj u korpu i unesi podatke za dostavu</span></li>
+      <li><span class="step-num">3</span><span data-i18n="how_step3">Plati pouzećem kad paket stigne</span></li>
     </ol>
-    <a href="#products" class="btn btn-primary">Pogledaj kolekciju</a>
+    <a href="#products" class="btn btn-primary" data-i18n="how_cta">Pogledaj kolekciju</a>
   </div>
 </section>
 
-<!-- ===== SIZE GUIDE ===== -->
+<!-- ===== SIZE GUIDE TEASER ===== -->
 <section class="size-guide" id="size-guide">
-  <div class="size-guide-inner">
-    <p class="eyebrow">Pomoć pri izboru</p>
-    <h2>Vodič za veličine</h2>
-    <p>Nisi sigurna koja veličina ti odgovara? Javi nam se sa merama — rado pomažemo da kostim savršeno legne pre nego što poručiš.</p>
-    <a href="#contact" class="btn btn-outline">Pitaj nas</a>
+  <div class="size-guide-inner reveal">
+    <p class="eyebrow" data-i18n="size_eyebrow">Pomoć pri izboru</p>
+    <h2 data-i18n="size_title">Vodič za veličine</h2>
+    <p data-i18n="size_text">Nisi sigurna koja veličina ti odgovara? Pogledaj detaljnu tabelu mera ili nam javi pa rado pomažemo.</p>
+    <div class="size-guide-actions">
+      <a href="/vodic-za-velicine.html" class="btn btn-primary" data-i18n="size_cta">Pogledaj vodič</a>
+      <a href="/kontakt.html" class="btn btn-outline" data-i18n="size_ask">Pitaj nas</a>
+    </div>
   </div>
 </section>
 
-<!-- ===== CONTACT / NEWSLETTER ===== -->
+<!-- ===== INSTAGRAM ===== -->
+<section class="instagram-section" id="instagram">
+  <div class="section-head reveal">
+    <p class="eyebrow" data-i18n="ig_eyebrow">Pratite nas</p>
+    <h2 data-i18n="ig_title">@ludancecostume</h2>
+    <p class="section-sub" data-i18n="ig_sub">Novi modeli, iza kulisa, i kostimi na sceni — pratite nas na Instagramu.</p>
+  </div>
+  <div class="ig-grid" id="igGrid">
+    <!-- Admin-populated photos or placeholders -->
+    <div class="ig-item"><div class="ig-item-placeholder"><svg width="32" height="32" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="5" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/><circle cx="12" cy="12" r="4" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/><circle cx="17.2" cy="6.8" r="1" fill="rgba(255,255,255,0.3)"/></svg></div></div>
+    <div class="ig-item"><div class="ig-item-placeholder"><svg width="32" height="32" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="5" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/><circle cx="12" cy="12" r="4" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/><circle cx="17.2" cy="6.8" r="1" fill="rgba(255,255,255,0.3)"/></svg></div></div>
+    <div class="ig-item"><div class="ig-item-placeholder"><svg width="32" height="32" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="5" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/><circle cx="12" cy="12" r="4" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/><circle cx="17.2" cy="6.8" r="1" fill="rgba(255,255,255,0.3)"/></svg></div></div>
+    <div class="ig-item"><div class="ig-item-placeholder"><svg width="32" height="32" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="5" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/><circle cx="12" cy="12" r="4" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/><circle cx="17.2" cy="6.8" r="1" fill="rgba(255,255,255,0.3)"/></svg></div></div>
+  </div>
+  <a href="https://www.instagram.com/ludancecostume" target="_blank" rel="noopener" class="ig-cta-btn reveal">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.6"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor"/></svg>
+    <span data-i18n="ig_cta">Otvorite Instagram</span>
+  </a>
+</section>
+
+<!-- ===== FOOTER ===== -->
 <footer class="site-footer" id="contact">
   <div class="footer-grid">
     <div class="footer-brand">
-      <p class="logo">LU<span>Costume</span></p>
-      <p id="footerEmail">emai@lucostume.rs</p>
+      <p class="logo" id="footerLogo"><img src="/uploads/1782887397036-579507672.png" alt="LU Costume" class="logo-img"></p>
+      <p id="footerEmail">info@lucostume.rs</p>
       <p id="footerPhone">+381 64 1234567</p>
     </div>
     <div class="footer-links">
-      <h4>Informacije</h4>
-      <a href="#how-to-order">Kako poručiti</a>
-      <a href="#size-guide">Vodič za veličine</a>
-      <a href="#">Politika privatnosti</a>
-      <a href="#">Uslovi korišćenja</a>
-      <a href="#">Povraćaj i reklamacije</a>
+      <h4 data-i18n="footer_pages">Stranice</h4>
+      <a href="/#how-to-order" data-i18n="how_eyebrow">Poručivanje</a>
+      <a href="/vodic-za-velicine.html" data-i18n="nav_sizes">Veličine</a>
+      <a href="/svi-proizvodi.html" data-i18n="nav_all">Svi proizvodi</a>
+      <a href="/pre-sale.html" data-i18n="nav_presale">Pre-Sale</a>
+      <a href="/kontakt.html" data-i18n="nav_contact">Kontakt</a>
+      <a href="https://www.instagram.com/ludancecostume" target="_blank" rel="noopener">Instagram ↗</a>
     </div>
     <div class="footer-newsletter">
-      <h4>Ne propusti nove kolekcije</h4>
+      <h4 data-i18n="footer_newsletter_title">Ne propusti nove kolekcije</h4>
       <form id="newsletterForm" class="newsletter-form">
-        <input type="email" placeholder="Tvoj email" required>
-        <button type="submit">Prijavi se</button>
+        <input type="email" data-i18n-ph="footer_newsletter_ph" placeholder="Tvoj email" required>
+        <button type="submit" data-i18n="footer_newsletter_btn">Prijavi se</button>
       </form>
       <p class="newsletter-msg" id="newsletterMsg"></p>
     </div>
   </div>
   <div class="footer-bottom">
-    <p>© 2026 LU Costume. Sva prava zadržana.</p>
+    <p data-i18n="footer_copyright">© 2026 LU Costume. Sva prava zadržana.</p>
+    <div class="footer-bottom-links">
+      <a href="/politika-privatnosti.html">Politika privatnosti</a>
+      <a href="/uslovi-koriscenja.html">Uslovi korišćenja</a>
+      <a href="/povracaj-reklamacije.html">Povraćaj i reklamacije</a>
+    </div>
   </div>
 </footer>
 
-<!-- ===== CART DRAWER ===== -->
+<!-- ===== CART ===== -->
 <div class="cart-overlay" id="cartOverlay"></div>
 <aside class="cart-drawer" id="cartDrawer">
   <div class="cart-head">
-    <h3>Tvoja korpa</h3>
-    <button class="cart-close" id="cartClose" aria-label="Zatvori korpu">&times;</button>
+    <h3 data-i18n="cart_title">Tvoja korpa</h3>
+    <button class="cart-close" id="cartClose">&times;</button>
   </div>
   <div class="cart-items" id="cartItems"></div>
   <div class="cart-footer" id="cartFooter">
-    <div class="cart-line"><span>Proizvodi</span><span id="cartSubtotal">0 рсд</span></div>
-    <div class="cart-line"><span>Dostava</span><span id="cartShipping">—</span></div>
-    <div class="cart-line cart-total"><span>Ukupno</span><span id="cartTotal">0 рсд</span></div>
-    <button class="btn btn-primary btn-block" id="checkoutBtn">Nastavi na plaćanje</button>
+    <div class="cart-line"><span data-i18n="cart_products">Proizvodi</span><span id="cartSubtotal">0 рсд</span></div>
+    <div class="cart-line"><span data-i18n="cart_shipping">Dostava</span><span id="cartShipping">—</span></div>
+    <div class="cart-line cart-total"><span data-i18n="cart_total">Ukupno</span><span id="cartTotal">0 рсд</span></div>
+    <button class="btn btn-primary btn-block" id="checkoutBtn" data-i18n="cart_checkout">Nastavi na plaćanje</button>
   </div>
 </aside>
 
 <!-- ===== CHECKOUT MODAL ===== -->
 <div class="modal-overlay" id="checkoutOverlay">
   <div class="modal checkout-modal">
-    <button class="modal-close" id="checkoutClose" aria-label="Zatvori">&times;</button>
-    <h3>Podaci za dostavu</h3>
-    <p class="checkout-sub">Plaćanje pouzećem — platite kuriru prilikom prijema paketa.</p>
+    <button class="modal-close" id="checkoutClose">&times;</button>
+    <h3 data-i18n="checkout_title">Podaci za dostavu</h3>
+
+    <!-- Payment method selection -->
+    <div class="checkout-payment-pick">
+      <p class="checkout-payment-label">Način plaćanja</p>
+      <div class="checkout-payment-options">
+        <label class="checkout-pay-opt">
+          <input type="radio" name="payment_method" value="pouzece" checked>
+          <span class="checkout-pay-opt-inner">
+            <span class="checkout-pay-icon">🚚</span>
+            <span>Pouzećem</span>
+          </span>
+        </label>
+        <label class="checkout-pay-opt">
+          <input type="radio" name="payment_method" value="paypal">
+          <span class="checkout-pay-opt-inner">
+            <span class="checkout-pay-icon" style="font-weight:700;font-size:0.9rem;color:#003087;">Pay<span style="color:#009cde">Pal</span></span>
+            <span>PayPal</span>
+          </span>
+        </label>
+        <label class="checkout-pay-opt">
+          <input type="radio" name="payment_method" value="nbs_qr">
+          <span class="checkout-pay-opt-inner">
+            <span class="checkout-pay-icon">🏦</span>
+            <span>NBS QR</span>
+          </span>
+        </label>
+      </div>
+      <!-- Payment instructions (shown per selection) -->
+      <div class="checkout-pay-info" id="payInfoPouzece">
+        <p>Platite gotovinom kuriru pri preuzimanju paketa.</p>
+      </div>
+      <div class="checkout-pay-info" id="payInfoPaypal" hidden>
+        <p>Uplatite na <strong><a id="checkoutPaypalLink" href="https://paypal.me/lucostume" target="_blank">paypal.me/lucostume</a></strong> pre potvrde porudžbine, pa pošaljite screenshot uplate na email.</p>
+      </div>
+      <div class="checkout-pay-info" id="payInfoNbs" hidden>
+        <p>Skenirajte QR kod ispod i uplatite. Nakon uplate pošaljite potvrdu na naš email.</p>
+        <div class="checkout-nbs-qr" id="checkoutNbsQr">
+          <span>NBS QR kod<br><small>Uploadujte QR kod u admin → Podešavanja</small></span>
+        </div>
+      </div>
+    </div>
+
     <form id="checkoutForm">
-      <div class="form-row">
-        <label>Ime i prezime *<input type="text" name="customer_name" required></label>
-      </div>
+      <div class="form-row"><label data-i18n="checkout_name">Ime i prezime *<input type="text" name="customer_name" autocomplete="name" required></label></div>
       <div class="form-row form-row-split">
-        <label>Telefon *<input type="tel" name="phone" required></label>
-        <label>Email<input type="email" name="email"></label>
+        <label data-i18n="checkout_phone">Telefon *<input type="tel" name="phone" autocomplete="tel" required></label>
+        <label data-i18n="checkout_email">Email<input type="email" name="email" autocomplete="email"></label>
       </div>
-      <div class="form-row">
-        <label>Adresa *<input type="text" name="address" required></label>
-      </div>
+      <div class="form-row"><label data-i18n="checkout_address">Adresa *<input type="text" name="address" autocomplete="street-address" required></label></div>
       <div class="form-row form-row-split">
-        <label>Grad *<input type="text" name="city" required></label>
-        <label>Poštanski broj<input type="text" name="postal_code"></label>
+        <label data-i18n="checkout_city">Grad *<input type="text" name="city" autocomplete="address-level2" required></label>
+        <label data-i18n="checkout_postal">Poštanski broj<input type="text" name="postal_code" autocomplete="postal-code"></label>
       </div>
-      <div class="form-row">
-        <label>Napomena<textarea name="note" rows="2" placeholder="Npr. veličina, boja, vreme dostave..."></textarea></label>
-      </div>
+      <div class="form-row"><label data-i18n="checkout_note">Napomena<textarea name="note" rows="2" placeholder="Npr. veličina, boja, vreme dostave..."></textarea></label></div>
       <div class="checkout-summary" id="checkoutSummary"></div>
       <p class="checkout-error" id="checkoutError" hidden></p>
-      <button type="submit" class="btn btn-primary btn-block" id="checkoutSubmit">Potvrdi porudžbinu (plaćanje pouzećem)</button>
+      <button type="submit" class="btn btn-primary btn-block" id="checkoutSubmit">Potvrdi porudžbinu</button>
     </form>
   </div>
 </div>
 
-<!-- ===== ORDER SUCCESS MODAL ===== -->
+<!-- ===== SUCCESS MODAL ===== -->
 <div class="modal-overlay" id="successOverlay">
   <div class="modal success-modal">
     <div class="success-icon">✓</div>
-    <h3>Hvala na porudžbini!</h3>
-    <p>Broj porudžbine: <strong id="successOrderNumber"></strong></p>
-    <p>Kontaktiraćemo vas radi potvrde. Plaćanje je pouzećem prilikom isporuke.</p>
-    <button class="btn btn-primary" id="successClose">Nastavi kupovinu</button>
+    <h3 data-i18n="success_title">Hvala na porudžbini!</h3>
+    <p><span data-i18n="success_order">Broj porudžbine:</span> <strong id="successOrderNumber"></strong></p>
+    <p data-i18n="success_msg">Kontaktiraćemo vas radi potvrde. Plaćanje je pouzećem prilikom isporuke.</p>
+    <button class="btn btn-primary" id="successClose" data-i18n="success_continue">Nastavi kupovinu</button>
   </div>
 </div>
 
@@ -176,6 +240,7 @@
   <div class="modal quickview-modal" id="quickViewContent"></div>
 </div>
 
+<script src="/js/i18n.js"></script>
 <script src="/js/app.js"></script>
 </body>
 </html>
